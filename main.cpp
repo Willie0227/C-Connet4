@@ -8,7 +8,7 @@ int column, row;
 
 char **boardSetup() {
 
-    do {
+//    do {
         //enter column & row
         cout << "***Welcome to connect 4!***" << endl;
         cout << "Please enter how many column do you want" << endl;
@@ -16,11 +16,11 @@ char **boardSetup() {
         cout << "Please enter how many row do you want" << endl;
         cin >> row;
 
-        if (column <= 4 && row <= 4) {
+      /*  if (column <= 4 || row <= 4) {
             cout << "Invalid input please re-enter. The board will be too small to connect 4" << endl;
-        }
+        }*/
 
-    } while (column < 4 || row < 4);
+//    } while (column < 4 || row < 4);
 
     // fill *
     char **board = new char *[row];
@@ -89,6 +89,26 @@ void dropCheck(char **board, int dropCol) {
 
 }
 
+bool again() {
+
+    int restart;
+
+    while (true) { //If play again
+
+        cout << "Would you like to restart? Yes(1) No(2): ";
+        cin >> restart;
+
+        if (restart == 1) {
+            return true;
+        } else if (restart == 2) {
+            cout << "Goodbye!" << endl;
+            return false;
+        }
+        cout << "You are dumb, re-enter." << endl;
+
+    }
+}
+
 int computerRandom(char **board) {
 
     int randNum;
@@ -98,8 +118,7 @@ int computerRandom(char **board) {
     randNum = rand() % column;
 
     cout << "It is now PC's Turn " << endl;
-    cout << randNum << endl;
-
+//    cout << randNum << endl;
     while (board[0][randNum] == 'X' || board[0][randNum] == 'O') {
         randNum = rand() % column;
     }
@@ -242,26 +261,6 @@ int checkNPC(char **board) {//check if computer win
     return win;
 }
 
-bool again() {
-
-    int restart;
-
-    while (true) { //If play again
-
-        cout << "Would you like to restart? Yes(1) No(2): ";
-        cin >> restart;
-
-        if (restart == 1) {
-            return true;
-        } else if (restart == 2) {
-            cout << "Goodbye!" << endl;
-            return false;
-        }
-        cout << "You are dumb, re-enter." << endl;
-
-    }
-}
-
 int fullDisplay(char **board) { //check if the board is full
 
     int full;
@@ -285,6 +284,11 @@ int main() { //main
 
     do {
 
+        //player turn
+        dropCol2 = playerTurn(board);
+        dropCheck(board, dropCol2);
+        boardDisplay(board);
+
         full = fullDisplay(board); // display the full alert
         if (full == column) {
             cout << "The game is draw! No one win the game" << endl;
@@ -292,20 +296,25 @@ int main() { //main
             if (isRun) {
                 board = boardSetup();
                 boardDisplay(board);
+                continue;
             }
         }
 
-        //player turn
-        dropCol2 = playerTurn(board);
-//        cout << dropCol2 << endl;
-        dropCheck(board, dropCol2);
-        boardDisplay(board);
-
         //computer turn
         computerChoice = computerRandom(board);
-//        cout << computerChoice;
         stupidAI(board, computerChoice);
         boardDisplay(board);
+
+        full = fullDisplay(board); // display the full alert
+        if (full == column) {
+            cout << "The game is draw! No one win the game" << endl;
+            isRun = again();
+            if (isRun) {
+                board = boardSetup();
+                boardDisplay(board);
+                continue;
+            }
+        }
 
         //check if computer or player win
         win = checkNPlayer(board);
@@ -330,4 +339,3 @@ int main() { //main
     } while (isRun);
     return 0;
 }
-
